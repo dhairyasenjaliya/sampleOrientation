@@ -1,112 +1,58 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
-import React from 'react';
-import type {Node} from 'react';
+import React, {useState} from 'react';
+import {Text, View, Button, StyleSheet, TouchableOpacity} from 'react-native';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+  OrientationLocker,
+  PORTRAIT,
+  LANDSCAPE,
+} from 'react-native-orientation-locker';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+export default function App() {
+  const [rotateScreen, setRotation] = useState(false);
+  const [flipScreen, setFlipScreen] = useState(1);
 
-const Section = ({children, title}): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
+    <View
+      style={[
+        styles.contain,
+        {
+          transform: [{scaleX: flipScreen}],
+        },
+      ]}>
+      <OrientationLocker
+        orientation={rotateScreen ? LANDSCAPE : PORTRAIT}
+        onChange={orientation => console.log('onChange', orientation)}
+        onDeviceChange={orientation =>
+          console.log('onDeviceChange', orientation)
+        }
+      />
+      <Text style={styles.titleText}>Hey Josephe</Text>
+
+      <TouchableOpacity
+        style={styles.buttonContain}
+        onPress={() => setRotation(!rotateScreen)}>
+        <Text style={styles.rotateButton}>
+          {rotateScreen ? 'Portrait-Rotate' : 'Landscape-Rotate'}
+        </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.buttonContain}
+        onPress={() => {
+          flipScreen === 1 ? setFlipScreen(-1) : setFlipScreen(1);
+        }}>
+        <Text style={styles.rotateButton}>
+          {flipScreen === 1 ? 'Flip Screen' : 'Normal'}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
-};
-
-const App: () => Node = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-};
+}
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  contain: {flex: 1, justifyContent: 'center', alignItems: 'center'},
+  titleText: {fontWeight: 'bold', fontSize: 30},
+  buttonContain: {
+    marginTop: 20,
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
+  rotateButton: {color: 'blue', fontSize: 20},
 });
-
-export default App;
