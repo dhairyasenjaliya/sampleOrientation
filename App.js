@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Text, View, Button, StyleSheet, TouchableOpacity} from 'react-native';
+import {Text, View, Button, StyleSheet, TouchableOpacity,Image} from 'react-native';
 import {
   OrientationLocker,
   PORTRAIT,
@@ -26,12 +26,13 @@ export default function App() {
         }
       />
       <Text style={styles.titleText}>Hey Josephe</Text>
+      <Image source={require('./car.jpg')} style={{width:350,height:200,marginTop:20}} />
 
       <TouchableOpacity
         style={styles.buttonContain}
         onPress={() => setRotation(!rotateScreen)}>
         <Text style={styles.rotateButton}>
-          {rotateScreen ? 'Portrait-Rotate' : 'Landscape-Rotate'}
+          {rotateScreen ? 'Press To Portrait-Rotate' : 'Press To Landscape-Rotate'}
         </Text>
       </TouchableOpacity>
 
@@ -41,7 +42,7 @@ export default function App() {
           flipScreen === 1 ? setFlipScreen(-1) : setFlipScreen(1);
         }}>
         <Text style={styles.rotateButton}>
-          {flipScreen === 1 ? 'Flip Screen' : 'Normal'}
+          Press To Flip Screen
         </Text>
       </TouchableOpacity>
     </View>
