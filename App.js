@@ -26,7 +26,7 @@ export default function App() {
         }
       />
       <Text style={styles.titleText}>Hey Josephe</Text>
-      <Image source={require('./car.jpg')} style={{width:350,height:200,marginTop:20}} />
+      <Image source={require('./arrow.jpg')} style={{width:350,height:200,marginTop:20}} />
 
       <TouchableOpacity
         style={styles.buttonContain}
