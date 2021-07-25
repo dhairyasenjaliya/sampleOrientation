@@ -16,12 +16,16 @@ import {
 import ViewShot from 'react-native-view-shot';
 import CameraRoll from '@react-native-community/cameraroll';
 import RecordScreen from 'react-native-record-screen';
+import Carousel from 'react-native-snap-carousel';
 
 import {
   OrientationLocker,
   PORTRAIT,
   LANDSCAPE,
 } from 'react-native-orientation-locker';
+
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 // import Btn from './Btn';
 
@@ -33,6 +37,7 @@ const Viewshoot = () => {
 
   const [rotateScreen, setRotation] = useState(false);
   const [flipScreen, setFlipScreen] = useState(1);
+  const [isRecording, setRecording] = useState(false);
 
   async function hasAndroidPermission() {
     const permission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
@@ -66,75 +71,87 @@ const Viewshoot = () => {
   }, []);
 
   const onRecordStart = () => {
-    console.log('🚀 ~ file: App.js ~ line 90 ~ onRecordStop ~ onRecordStop');
-
     RecordScreen.startRecording()
       .then(data => {
+        setRecording(true);
         console.log('start ', data);
       })
-      .catch(error => console.log(error));
+      .catch(error => {
+        // eslint-disable-next-line no-alert
+        alert(error.message);
+      });
   };
 
   const onRecordStop = async () => {
-    console.log('🚀 ~ file: App.js ~ line 90 ~ onRecordStop ~ onRecordStop');
-
     const res = await RecordScreen.stopRecording().catch(error =>
-      console.timeLog(error),
+      console.log(error),
     );
 
     if (res) {
       const url = res.result.outputURL;
       if (url) {
         CameraRoll.save(url).then(data => {
-          console.log(
-            '🚀 ~ file: App.js ~ line 80 ~ CameraRoll.save ~ data',
-            data,
-          );
-          alert('Screen Rocerded');
+          setRecording(false);
+          alert('Screen Recorded');
         });
       }
     }
   };
 
-  return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.root}
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={() => {
-            setRefreshing(true);
-            setTimeout(() => {
-              setItemsCount(itemsCount + 10);
-              setRefreshing(false);
-            }, 5000);
-          }}
+  function _renderItem() {
+    return (
+      <View>
+        <Image
+          style={{height: 450, width: 400}}
+          source={{uri: 'https://picsum.photos/200/300'}}
+          resizeMode={'stretch'}
         />
-      }>
-      <SafeAreaView style={{alignItems: 'center'}}>
-        <ViewShot ref={full} style={styles.container}>
-          <View
-            style={[
-              styles.contain,
-              {
-                transform: [{scaleX: flipScreen}],
-              },
-            ]}>
-            <OrientationLocker
-              orientation={rotateScreen ? LANDSCAPE : PORTRAIT}
-              onChange={orientation => console.log('onChange', orientation)}
-              onDeviceChange={orientation =>
-                console.log('onDeviceChange', orientation)
-              }
-            />
-            <Text style={styles.titleText}>Hey Josephe</Text>
-            <Image
+      </View>
+    );
+  }
+
+  return (
+    <SafeAreaView style={{flex: 1, backgroundColor: '#FFF'}}>
+      <ViewShot
+        ref={full}
+        style={[styles.container, {backgroundColor: '#FFF'}]}>
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={styles.root}>
+          <View ref={full} style={styles.container}>
+            <View
+              style={[
+                styles.contain,
+                {
+                  transform: [{scaleX: flipScreen}],
+                },
+              ]}>
+              <OrientationLocker
+                orientation={rotateScreen ? LANDSCAPE : PORTRAIT}
+                onChange={orientation => console.log('onChange', orientation)}
+                onDeviceChange={orientation =>
+                  console.log('onDeviceChange', orientation)
+                }
+              />
+              <Text style={styles.titleText}>Hey Josephe</Text>
+              {/* <Image
               source={require('./arrow.jpg')}
               style={{width: 350, height: 150, marginTop: 20}}
-            />
+            /> */}
 
-            <TouchableOpacity
+              <Carousel
+                data={[1, 2, 3, 5, 6, 7, 8, 9, 10, 11]}
+                renderItem={_renderItem}
+                sliderWidth={800}
+                itemWidth={400}
+                sliderHeight={400}
+                loop
+                containerCustomStyle={{
+                  alignSelf: 'center',
+                }}
+              />
+
+              {/* <TouchableOpacity
               style={styles.buttonContain}
               onPress={() => setRotation(!rotateScreen)}>
               <Text style={styles.rotateButton}>
@@ -142,9 +159,9 @@ const Viewshoot = () => {
                   ? 'Press To Portrait-Rotate'
                   : 'Press To Landscape-Rotate'}
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
-            <TouchableOpacity
+              {/* <TouchableOpacity
               style={styles.buttonContain}
               onPress={() => {
                 flipScreen === 1 ? setFlipScreen(-1) : setFlipScreen(1);
@@ -162,24 +179,57 @@ const Viewshoot = () => {
 
             <TouchableOpacity onPress={onRecordStop}>
               <Text style={styles.titleText}>Record Stop </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
+            </View>
           </View>
-        </ViewShot>
-      </SafeAreaView>
-    </ScrollView>
+        </ScrollView>
+
+        <View style={styles.bottomButton2}>
+          <TouchableOpacity
+            onPress={() => {
+              flipScreen === 1 ? setFlipScreen(-1) : setFlipScreen(1);
+            }}
+            style={[styles.commonButton, {backgroundColor: '#9795ef'}]}>
+            <Text style={styles.buttonText2}>Flip Screen</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setRotation(!rotateScreen)}
+            style={[styles.commonButton, {backgroundColor: '#f9c5d1'}]}>
+            {/* f53844 */}
+            <Text style={styles.buttonText2}>Rotate Screen</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.bottomButton}>
+          <TouchableOpacity
+            onPress={onCapture}
+            style={[styles.commonButton, {backgroundColor: '#045de9'}]}>
+            <Text style={styles.buttonText}>ScreenShot</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={isRecording ? onRecordStop : onRecordStart}
+            style={[
+              styles.commonButton,
+              {backgroundColor: isRecording ? '#f53844' : '#20bf55'},
+            ]}>
+            <Text style={styles.buttonText}>
+              {isRecording ? 'Stop Recording' : ' Record'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ViewShot>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    // paddingHorizontal: 10,
     flex: 1,
-    backgroundColor: 'red',
-
-    // width: Dimensions.get('window').width,
-    // height: Dimensions.get('window').height,
   },
   root: {
     paddingVertical: 20,
+    paddingBottom: 200,
   },
   content: {
     backgroundColor: '#fff',
@@ -200,8 +250,9 @@ const styles = StyleSheet.create({
   titleText: {
     fontWeight: 'bold',
     fontSize: 30,
-    color: '#FFF',
-    marginTop: 20,
+    // marginTop: 20,
+    marginBottom: 20,
+    alignSelf: 'center',
   },
   buttonContain: {
     marginTop: 10,
@@ -209,6 +260,35 @@ const styles = StyleSheet.create({
   rotateButton: {
     color: 'blue',
     fontSize: 15,
+  },
+  commonButton: {
+    flex: 1,
+    alignItems: 'center',
+    height: 50,
+    justifyContent: 'center',
+    width: '50%',
+  },
+  buttonText: {
+    fontSize: 18,
+    color: '#FFF',
+  },
+  buttonText2: {
+    fontSize: 18,
+    // color: '#FFF',
+  },
+  bottomButton: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    position: 'absolute',
+    bottom: 30,
+    alignSelf: 'center',
+  },
+  bottomButton2: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    position: 'absolute',
+    bottom: 90,
+    alignSelf: 'center',
   },
 });
 
