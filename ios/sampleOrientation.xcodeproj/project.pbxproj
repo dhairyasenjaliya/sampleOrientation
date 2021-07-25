@@ -145,7 +145,6 @@
 				41FA82D3153249D1F09262B4 /* Pods-sampleOrientation-sampleOrientationTests.debug.xcconfig */,
 				901CA2D8AA84D99AFAF0D5E1 /* Pods-sampleOrientation-sampleOrientationTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -485,6 +484,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7P7KA7D4J5;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = sampleOrientation/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -511,6 +511,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7P7KA7D4J5;
 				INFOPLIST_FILE = sampleOrientation/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
