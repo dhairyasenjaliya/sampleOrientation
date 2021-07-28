@@ -70,22 +70,60 @@ const Viewshoot = () => {
     });
   }, []);
 
-  const onRecordStart = () => {
-    RecordScreen.startRecording()
-      .then(data => {
-        setRecording(true);
-        console.log('start ', data);
-      })
-      .catch(error => {
-        // eslint-disable-next-line no-alert
+  const onRecordStart = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+          {
+            title: 'Permissions for record audio',
+            message: 'Give permission to your device to record audio',
+            buttonPositive: 'ok',
+          },
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          setRecording(true);
+          try {
+            await RecordScreen.startRecording({mic: false}).catch(error => {
+              // eslint-disable-next-line no-alert
+              alert(error.message);
+              setRecording(false);
+            });
+          } catch (error) {
+            alert(error.message);
+            setRecording(false);
+          }
+        } else {
+          alert('Permission Denied!');
+          return;
+        }
+      } catch (err) {
+        console.warn(err);
+        return;
+      }
+    } else {
+      setRecording(true);
+      try {
+        await RecordScreen.startRecording({mic: false}).catch(error => {
+          // eslint-disable-next-line no-alert
+          alert(error.message);
+          setRecording(false);
+        });
+      } catch (error) {
         alert(error.message);
-      });
+        setRecording(false);
+      }
+    }
   };
 
   const onRecordStop = async () => {
-    const res = await RecordScreen.stopRecording().catch(error =>
-      console.log(error),
-    );
+    const res = await RecordScreen.stopRecording().catch(error => {
+      setRecording(false);
+    });
+ 
+    if (Platform.OS === 'android' && !(await hasAndroidPermission())) {
+      return;
+    }
 
     if (res) {
       const url = res.result.outputURL;
@@ -95,7 +133,7 @@ const Viewshoot = () => {
           alert('Screen Recorded');
         });
       }
-    }
+    } 
   };
 
   function _renderItem() {
